@@ -1,0 +1,28 @@
+---
+title: "Calibrate Sagehen streamflow"
+authors: "Rosemary Juarez, Vanessa Salgado"
+date: "2024-04-25"
+---
+
+## Assignment Instructions
+
+Part 1: Come up with a combined metric that you think is interesting
+
+-   if you can, try to include at least one metric (as part of your combined metric) that needs to be transformed
+-   be creative - you can subset, aggregate, focus only on particular type of years or days
+-   think about ecological or human water uses that depend on certain flow conditions
+
+Part II
+
+-   Perform a split-sample calibration on the Sagehen model output (sagerm.txt)
+    -   you can decide what years to pick for pre and post calibration
+    -   use your performance metric from Part I
+-   Find the best and worst parameter set, given your performance metric
+-   Graph something about streamflow (e.g daily, mean August, or ?) for the best parameter set
+-   Compute and plot how the performance of the model using the best parameter set changed in pre and post calibration periods (that you chose)
+-   Add the 'best' parameter set column number number to the quiz linked below (so we can compare how different metrics influence which parameter you pick)
+-   Write 2-3 sentences to explain your metric design and comment on model performance based on your metric
+
+Use to Best Parameter (Column) to record your 'best' parameter sets ([GO TO CANVAS FOR THIS TEST](https://ucsb.instructure.com/courses/19594/assignments/240440))
+
+Hand in Rmarkdown and R file with your performance metric
