@@ -193,3 +193,36 @@ print(combined_result)
 
 ```
 
+## Part 2: Split Sample Calibration
+```{r}
+# Split-sample calibration function
+split_sample_calibration <- function(msage, pre_calibration_years, post_calibration_years, metric_weights) {
+  # Filter data for pre and post calibration periods
+  pre_calibration_data <- filter(data, year %in% pre_calibration_years)
+  post_calibration_data <- filter(data, year %in% post_calibration_years)
+  
+  # Calibrate model parameters using pre-calibration data
+  
+  # Evaluate model performance using your combined metric
+  pre_calibration_performance <- combined_metric(nse(pre_calibration_data), relerr(pre_calibration_data), cper(pre_calibration_data), metric_weights)
+  
+  # Identify the best parameter set from pre-calibration
+  
+  # Calibrate model parameters using post-calibration data
+  
+  # Evaluate model performance using your combined metric
+  post_calibration_performance <- combined_metric(nse(post_calibration_data), relerr(post_calibration_data), cper(post_calibration_data), metric_weights)
+  
+  # Plot how the performance of the model changed pre and post calibration
+  plot_calibration_performance(pre_calibration_performance, post_calibration_performance)
+  
+  # Return the best parameter set
+  return(best_parameter_set)
+}
+
+# Call the split-sample calibration function with appropriate arguments
+best_parameter_set <- split_sample_calibration(msage, pre_calibration_years, post_calibration_years, weights)
+
+```
+
+
