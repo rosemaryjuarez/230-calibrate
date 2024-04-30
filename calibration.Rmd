@@ -11,8 +11,57 @@ library(sensitivity)
 library(tidyverse)
 library(purrr)
 library(ggpubr)
+library(here)
 ```
 
+```{r, read in data}
+
+#--------------------------
+#   set working directory
+#--------------------------
+setwd(here::here())
+
+
+#--------------------------
+#   read in data
+#--------------------------
+#reading in observed stream flow data
+sager = read.table(here("data","sager.txt"), header=T)
+
+#simulated data from multiple model runs
+# multiple results - assuming we've run the model for multiple years, each column
+# is streamflow for a different parameter set
+msage = read.table(here("data","sagerm.txt"), header=T)
+
+
+#--------------------------
+#   preprocessing data
+#--------------------------
+
+# add date ton sager
+sager = sager %>%
+  mutate(date = paste(day,month,year, sep="/"))
+
+#converting to datetime format
+sager$date = as.Date(sager$date,"%d/%m/%Y")
+
+
+#--------------------------
+#   sourcing in R scripts
+#--------------------------
+
+#Nash-Sutcliffe Efficiency
+source("R/nse.R")
+
+#combined performance metric between NSE and relative error
+source("R/cper.R")
+
+#relative error between the model and observations
+source("R/relerr.R")
+
+#
+
+```
 
 ## Assignment Instructions
 
@@ -42,7 +91,7 @@ Hand in Rmarkdown and R file with your performance metric
 # creating our model metric
 
 For our assignment, we want to observe the time series of **high flow periods** and **peak flow periods** within the "blank river"
-as noted in the graph below, the observed that during the year 1977, peak values of high water periods was during the month of April.
+as noted in the graph below, we observed that during the year 1977, peak values of high water periods was during the month of April.
 ```{r}
 ggplot(subset(sagerl, wy==1977), aes(date, flow, col=source,
 linetype=source))+geom_line()+scale_y_continuous(trans="log")+labs(y="streamflow
