@@ -4,6 +4,7 @@ authors: "Rosemary Juarez, Vanessa Salgado, Liane Chen"
 date: "2024-04-30"
 output: html_document
 ---
+
 ```{r, setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
@@ -45,6 +46,10 @@ sager = sager %>%
 #converting to datetime format
 sager$date = as.Date(sager$date,"%d/%m/%Y")
 
+# "model" and "obs" columns are combined into a single column, and their corresponding values are placed in another column. 
+sagerl = sager %>% pivot_longer(cols=c("model","obs"), names_to="source",
+                                  values_to="flow")
+
 
 #--------------------------
 #   sourcing in R scripts
@@ -53,13 +58,20 @@ sager$date = as.Date(sager$date,"%d/%m/%Y")
 #Nash-Sutcliffe Efficiency
 source("R/nse.R")
 
-#combined performance metric between NSE and relative error
-source("R/cper.R")
-
 #relative error between the model and observations
 source("R/relerr.R")
 
-#
+#combined performance metric between NSE and relative error
+source("R/cper.R")
+
+
+#calculates performance metrics focusing on high flow periods
+# computes the error and correlation of annual max flows and monthly flows during 
+# April(high flow months)
+source("R/compute_highflowmetrics.R")
+
+#computes a combined metric giving different weights to each metrics
+source("R/compute_highflowmetrics_all.R")
 
 ```
 
@@ -70,7 +82,6 @@ Part 1: Come up with a combined metric that you think is interesting
 -   if you can, try to include at least one metric (as part of your combined metric) that needs to be transformed
 -   be creative - you can subset, aggregate, focus only on particular type of years or days
 -   think about ecological or human water uses that depend on certain flow conditions
-
 
 Part II
 
@@ -87,22 +98,23 @@ Use to Best Parameter (Column) to record your 'best' parameter sets ([GO TO CANV
 
 Hand in Rmarkdown and R file with your performance metric
 
-
 # creating our model metric
 
-For our assignment, we want to observe the time series of **high flow periods** and **peak flow periods** within the "blank river"
-as noted in the graph below, we observed that during the year 1977, peak values of high water periods was during the month of April.
-```{r}
+For our assignment, we want to observe the time series of **high flow periods** and **peak flow periods** within the "blank river" as noted in the graph below, we observed that during the year 1977, peak values of high water periods was during the month of April and may.
+
+```{r, model observations}
 ggplot(subset(sagerl, wy==1977), aes(date, flow, col=source,
-linetype=source))+geom_line()+scale_y_continuous(trans="log")+labs(y="streamflow
+linetype=source))+
+  geom_line()+
+  scale_y_continuous(trans="log")+
+  labs(y="streamflow
 mm/day")
 ```
 
+Because we want to evaluate the performance of the model based on high stream flow conditions in April, we will use three metrics to check this out:
 
-WE WANT To compute high metrics, so we are switching from compute_lowflowmetrics function and changing the month (8) which is august.
+-   `NSE.R` (Nash-Sutcliffe Efficiency)
 
-instead of calculating metrics for low flow periods, we want to calculate metrics for high flow periods.
+-    `relerr.R`(Relative Error)
 
-\- tune serues if maximum events and peak stream flow
-
--   we are going to use april, since it had the
+-    `cper.R` (relative error between model and obs)
