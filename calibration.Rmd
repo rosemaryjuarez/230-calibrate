@@ -118,3 +118,14 @@ Because we want to evaluate the performance of the model based on high stream fl
 -    `relerr.R`(Relative Error)
 
 -    `cper.R` (relative error between model and obs)
+
+```{r}
+source(here("R","cper.R")) 
+source(here("R","relerr.R"))
+source(here("R","cper.R")) 
+
+nse
+relerr
+cper
+```
+
