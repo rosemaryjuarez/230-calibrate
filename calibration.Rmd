@@ -100,7 +100,7 @@ Hand in Rmarkdown and R file with your performance metric
 
 # creating our model metric
 
-For our assignment, we want to observe the time series of **high flow periods** and **peak flow periods** within the "blank river" as noted in the graph below, we observed that during the year 1977, peak values of high water periods was during the month of April and may.
+For our assignment, we want to observe the time series of **high flow periods** and **peak flow periods** within the "blank river" as noted in the graph below, we observed that during the year 1977, peak values of high water periods was during the month of April and May.
 
 ```{r, model observations}
 ggplot(subset(sagerl, wy==1977), aes(date, flow, col=source,
@@ -143,11 +143,13 @@ cper(m=sager$model, o=sager$obs, weight.nse=0.8)
 
 ```{r}
 sager_mos = sager %>% group_by(month) %>% summarize(model=sum(model), obs=sum(obs))
-nse(sager_mos$model, sager_mos$obs)
+nse_result <- nse(sager_mos$model, sager_mos$obs)
+nse_result
 ```
 
 ```{r}
-cper(m=sager_mos$model, o=sager_mos$obs, weight.nse=0.8)
+cper_result <- cper(m=sager_mos$model, o=sager_mos$obs, weight.nse=0.8)
+cper_result
 ```
 
 ```{r}
@@ -157,7 +159,37 @@ tmp = sager %>% group_by(wy, month) %>% summarize(model=sum(model), obs=sum(obs)
 
 # now extract april
 sager_apr = subset(tmp, month==4)
-cor(sager_apr$model, sager_apr$obs)
+sager_result <- cor(sager_apr$model, sager_apr$obs)
+sager_result
+
+```
+
+```{r}
+# now extract may
+sager_may = subset(tmp, month==5)
+cor(sager_may$model, sager_may$obs)
+```
+
+##Part 1: Combined Metric
+```{r}
+# Define your combined metric function
+combined_metric <- function(nse, sager, cper, weights = c(0.3, 0.3, 0.4)) {
+  # Transform if necessary
+  transformed_nse <- nse # No transformation for NSE
+  transformed_sager <- log(1 + abs(sager)) # Transforming relative error
+  transformed_cper <- cper # No transformation for cper
+  
+  # Combine metrics with weights
+  combined <- (weights[1] * transformed_nse) + (weights[2] * transformed_sager) + (weights[3] * transformed_cper)
+  
+  return(combined)
+}
+
+# Calculate combined metric
+combined_result <- combined_metric(nse_result, sager_result, cper_result)
+
+# Print combined metric result
+print(combined_result)
 
 ```
 
