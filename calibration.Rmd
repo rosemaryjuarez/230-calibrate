@@ -129,3 +129,15 @@ relerr
 cper
 ```
 
+```{r}
+nse(m=sager$model, o=sager$obs)
+```
+
+```{r}
+relerr(m=sager$model, o=sager$obs)*100
+```
+
+```{r}
+cper(m=sager$model, o=sager$obs, weight.nse=0.8)
+```
+
