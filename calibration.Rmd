@@ -146,3 +146,18 @@ sager_mos = sager %>% group_by(month) %>% summarize(model=sum(model), obs=sum(ob
 nse(sager_mos$model, sager_mos$obs)
 ```
 
+```{r}
+cper(m=sager_mos$model, o=sager_mos$obs, weight.nse=0.8)
+```
+
+```{r}
+# just look at april flow
+# first sum by month
+tmp = sager %>% group_by(wy, month) %>% summarize(model=sum(model), obs=sum(obs))
+
+# now extract april
+sager_apr = subset(tmp, month==4)
+cor(sager_apr$model, sager_apr$obs)
+
+```
+
