@@ -1,8 +1,18 @@
 ---
 title: "Calibrate Sagehen streamflow"
-authors: "Rosemary Juarez, Vanessa Salgado"
-date: "2024-04-25"
+authors: "Rosemary Juarez, Vanessa Salgado, Liane Chen"
+date: "2024-04-30"
+output: html_document
 ---
+```{r, setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(sensitivity)
+library(tidyverse)
+library(purrr)
+library(ggpubr)
+```
+
 
 ## Assignment Instructions
 
@@ -11,6 +21,7 @@ Part 1: Come up with a combined metric that you think is interesting
 -   if you can, try to include at least one metric (as part of your combined metric) that needs to be transformed
 -   be creative - you can subset, aggregate, focus only on particular type of years or days
 -   think about ecological or human water uses that depend on certain flow conditions
+
 
 Part II
 
@@ -26,3 +37,23 @@ Part II
 Use to Best Parameter (Column) to record your 'best' parameter sets ([GO TO CANVAS FOR THIS TEST](https://ucsb.instructure.com/courses/19594/assignments/240440))
 
 Hand in Rmarkdown and R file with your performance metric
+
+
+# creating our model metric
+
+For our assignment, we want to observe the time series of **high flow periods** and **peak flow periods** within the "blank river"
+as noted in the graph below, the observed that during the year 1977, peak values of high water periods was during the month of April.
+```{r}
+ggplot(subset(sagerl, wy==1977), aes(date, flow, col=source,
+linetype=source))+geom_line()+scale_y_continuous(trans="log")+labs(y="streamflow
+mm/day")
+```
+
+
+WE WANT To compute high metrics, so we are switching from compute_lowflowmetrics function and changing the month (8) which is august.
+
+instead of calculating metrics for low flow periods, we want to calculate metrics for high flow periods.
+
+\- tune serues if maximum events and peak stream flow
+
+-   we are going to use april, since it had the
