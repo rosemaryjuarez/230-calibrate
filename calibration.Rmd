@@ -141,3 +141,8 @@ relerr(m=sager$model, o=sager$obs)*100
 cper(m=sager$model, o=sager$obs, weight.nse=0.8)
 ```
 
+```{r}
+sager_mos = sager %>% group_by(month) %>% summarize(model=sum(model), obs=sum(obs))
+nse(sager_mos$model, sager_mos$obs)
+```
+
