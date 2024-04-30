@@ -13,6 +13,7 @@ library(tidyverse)
 library(purrr)
 library(ggpubr)
 library(here)
+library(kableExtra)
 ```
 
 ```{r, read in data}
@@ -50,28 +51,6 @@ sager$date = as.Date(sager$date,"%d/%m/%Y")
 sagerl = sager %>% pivot_longer(cols=c("model","obs"), names_to="source",
                                   values_to="flow")
 
-
-#--------------------------
-#   sourcing in R scripts
-#--------------------------
-
-#Nash-Sutcliffe Efficiency
-source("R/nse.R")
-
-#relative error between the model and observations
-source("R/relerr.R")
-
-#combined performance metric between NSE and relative error
-source("R/cper.R")
-
-
-#calculates performance metrics focusing on high flow periods
-# computes the error and correlation of annual max flows and monthly flows during 
-# April(high flow months)
-source("R/compute_highflowmetrics.R")
-
-#computes a combined metric giving different weights to each metrics
-source("R/compute_highflowmetrics_all.R")
 
 ```
 
@@ -115,31 +94,51 @@ Because we want to evaluate the performance of the model based on high stream fl
 
 -   `NSE.R` (Nash-Sutcliffe Efficiency)
 
--    `relerr.R`(Relative Error)
+-   `relerr.R`(Relative Error)
 
--    `cper.R` (relative error between model and obs)
+-   `cper.R` (relative error between model and obs)
 
 ```{r}
-source(here("R","cper.R")) 
-source(here("R","relerr.R"))
-source(here("R","cper.R")) 
+#--------------------------
+#   sourcing in R scripts
+#--------------------------
 
-nse
-relerr
-cper
+#Nash-Sutcliffe Efficiency
+source("R/nse.R")
+
+#relative error between the model and observations
+source("R/relerr.R")
+
+#combined performance metric between NSE and relative error
+source("R/cper.R")
+
+
+#calculates performance metrics focusing on high flow periods
+# computes the error and correlation of annual max flows and monthly flows during 
+# April(high flow months)
+source("R/compute_highflowmetrics.R")
+
+#computes a combined metric giving different weights to each metrics
+source("R/compute_highflowmetrics_all.R")
 ```
 
 ```{r}
-nse(m=sager$model, o=sager$obs)
+
+#using the functions we called earlier:
+nse_value <- nse(m = sager$model, o = sager$obs)
+relerr_value <- relerr(m = sager$model, o = sager$obs) * 100
+cper_value <- cper(m = sager$model, o = sager$obs, weight.nse = 0.8)
+
+# Create a data frame with the metric names and values
+metrics_df <- data.frame(
+  Metric = c("Nash-Sutcliffe Efficiency (NSE)", "Relative Error (%)", "Combined Performance (CP)"),
+  Value = c(nse_value, relerr_value, cper_value)
+)
+
+# Use kable to create the table
+kable(metrics_df, align = "c", caption = "Model Performance Metrics")
 ```
 
-```{r}
-relerr(m=sager$model, o=sager$obs)*100
-```
-
-```{r}
-cper(m=sager$model, o=sager$obs, weight.nse=0.8)
-```
 
 ```{r}
 sager_mos = sager %>% group_by(month) %>% summarize(model=sum(model), obs=sum(obs))
@@ -171,6 +170,7 @@ cor(sager_may$model, sager_may$obs)
 ```
 
 ##Part 1: Combined Metric
+
 ```{r}
 # Define your combined metric function
 combined_metric <- function(nse, sager, cper, weights = c(0.3, 0.3, 0.4)) {
@@ -194,6 +194,7 @@ print(combined_result)
 ```
 
 ## Part 2: Split Sample Calibration
+
 ```{r}
 # Split-sample calibration function
 split_sample_calibration <- function(msage, pre_calibration_years, post_calibration_years, metric_weights) {
@@ -224,5 +225,3 @@ split_sample_calibration <- function(msage, pre_calibration_years, post_calibrat
 best_parameter_set <- split_sample_calibration(msage, pre_calibration_years, post_calibration_years, weights)
 
 ```
-
-
